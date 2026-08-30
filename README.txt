@@ -26,7 +26,7 @@ Want to run this project locally? Follow these steps:
 
 1️⃣ Clone the Repository
 
-git clone https://github.com/yourusername/global-times-map.git
+git clone https://https://github.com/shaikimthiyas/On-Map-Time-Zones
 cd global-times-map
 
 2️⃣ Open the Project
