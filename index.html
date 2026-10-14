@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOROLOGIUM // Global Temporal & Meridian Telemetry System</title>
+    <meta name="description" content="High-precision interactive world timezone atlas, UTC meridian tracker, and live temporal telemetry web application." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles/main.css"/>
+    <style>
+        .atlas-home {
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--bg-canvas);
+        }
+
+        .atlas-hero {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 80px 24px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .atlas-tag {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+            padding: 4px 10px;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-xs);
+            background: var(--bg-surface-1);
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .atlas-hero h1 {
+            font-family: var(--font-editorial);
+            font-size: clamp(2.8rem, 6vw, 4.8rem);
+            font-weight: 400;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            max-width: 880px;
+        }
+
+        .atlas-hero p.subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 660px;
+            margin-bottom: 36px;
+        }
+
+        .atlas-cta-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .cta-btn-primary {
+            height: 42px;
+            padding: 0 24px;
+            background: var(--text-primary);
+            color: var(--bg-canvas);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .cta-btn-primary:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(255, 77, 46, 0.25);
+        }
+
+        .cta-btn-secondary {
+            height: 42px;
+            padding: 0 20px;
+            background: var(--bg-surface-1);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border-hairline);
+            transition: all var(--transition-fast);
+        }
+
+        .cta-btn-secondary:hover {
+            border-color: var(--border-focus);
+            background: var(--bg-surface-2);
+        }
+
+        /* 3-Cell Instrumentation Bento */
+        .atlas-bento {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            border: 1px solid var(--border-hairline);
+            background: var(--border-hairline);
+            gap: 1px;
+            margin-bottom: 60px;
+            text-align: left;
+        }
+
+        .bento-cell {
+            background: var(--bg-canvas);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bento-micro-header {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bento-metric-large {
+            font-family: var(--font-mono);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .bento-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Specifications Table */
+        .specs-panel {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto 60px;
+            padding: 0 24px;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--border-hairline);
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+
+        .specs-table th {
+            background: var(--bg-surface-1);
+            border: 1px solid var(--border-hairline);
+            padding: 12px 16px;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        .specs-table td {
+            border: 1px solid var(--border-hairline);
+            padding: 12px 16px;
+            color: var(--text-secondary);
+        }
+
+        .specs-table td.spec-val {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .atlas-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-hairline);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-tertiary);
+            background: var(--bg-surface-1);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body class="atlas-home">
+
+    <!-- Top Telemetry Bar -->
+    <header class="telemetry-bar">
+        <div class="telemetry-left">
+            <a href="/index.html" class="brand-monogram">
+                <span class="brand-dot"></span>
+                <span>HOROLOGIUM</span>
+            </a>
+            <span class="telemetry-title">Global Temporal & Meridian Telemetry</span>
+        </div>
+
+        <div class="telemetry-center">
+            <div class="utc-master-clock">
+                <span class="utc-label">UTC MASTER</span>
+                <span id="homeUtcClock" class="font-mono">--:--:-- UTC</span>
+            </div>
+        </div>
+
+        <div class="telemetry-right">
+            <button type="button" class="telemetry-btn" id="homeThemeToggle" title="Toggle Theme">DECK</button>
+            <a href="/src/pages/map.html" class="nav-action-btn">INTERACTIVE MAP</a>
+            <a href="/src/pages/country.html" class="nav-action-btn">DIRECTORY</a>
+            <a href="/src/pages/contact.html" class="nav-action-btn">REGISTRY</a>
+            <a href="/src/pages/auth.html" class="nav-action-btn">OPERATOR</a>
+        </div>
+    </header>
+
+    <!-- Main Atlas Hero -->
+    <main class="atlas-hero">
+        <div class="atlas-tag">
+            <span style="color: var(--accent-primary);">●</span>
+            HOROLOGIUM ARCHITECTURE // GLOBAL MERIDIAN TELEMETRY
+        </div>
+
+        <h1>Global Temporal & Meridian Telemetry System</h1>
+        <p class="subtitle">An architectural vector world clock inspired by Swiss astronomical movements and geodesic navigation instrumentation. Real-time solar terminator modeling, 24-hour mechanical scrubber, and zero-latency client-side IANA horology across 220 sovereign territories.</p>
+
+        <div class="atlas-cta-group">
+            <a href="/src/pages/map.html" class="cta-btn-primary">
+                <span>⊕</span> LAUNCH INTERACTIVE MAP FLIGHT DECK
+            </a>
+            <a href="/src/pages/country.html" class="cta-btn-secondary">
+                <span>≡</span> BROWSE 220+ NATIONS DIRECTORY
+            </a>
+            <a href="/src/pages/auth.html" class="cta-btn-secondary">
+                <span>🔒</span> OPERATOR ACCESS
+            </a>
+        </div>
+
+        <!-- Bento Instrumentation Overview -->
+        <div class="atlas-bento">
+            <div class="bento-cell">
+                <div class="bento-micro-header">
+                    <span>ATOMIC TELEMETRY</span>
+                    <span>01</span>
+                </div>
+                <div class="bento-metric-large" id="homeDeviceClock">--:--:--</div>
+                <div class="bento-desc">Zero-latency client-side IANA timezone computation with strict tabular numerals, backed by isolated fallback architecture.</div>
+            </div>
+
+            <div class="bento-cell">
+                <div class="bento-micro-header">
+                    <span>ASTRONOMICAL TERMINATOR</span>
+                    <span>02</span>
+                </div>
+                <div class="bento-metric-large" style="color: var(--accent-tertiary);" id="homeSolarDec">--.-°</div>
+                <div class="bento-desc">Dynamic solar declination and subsolar meridian calculation projecting a mathematical day/night shadow boundary in real time.</div>
+            </div>
+
+            <div class="bento-cell">
+                <div class="bento-micro-header">
+                    <span>GEODESIC RESOLUTION</span>
+                    <span>03</span>
+                </div>
+                <div class="bento-metric-large" style="color: var(--accent-secondary);">220 NATIONS</div>
+                <div class="bento-desc">Full sovereign coverage mapped to 470 vector geometric paths, featuring longitudinal timezone meridian snaps and relative business hour rulers.</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Technical Specifications Matrix -->
+    <section class="specs-panel">
+        <table class="specs-table">
+            <thead>
+                <tr>
+                    <th>SUBSYSTEM</th>
+                    <th>PARAMETER</th>
+                    <th>SPECIFICATION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="spec-val">HOROLOGY ENGINE</td>
+                    <td>Coordinate Precision</td>
+                    <td>Native Intl.DateTimeFormat (IANA Database 2026.10) with WorldTimeAPI verification</td>
+                </tr>
+                <tr>
+                    <td class="spec-val">CARTOGRAPHY</td>
+                    <td>Projection & Graticules</td>
+                    <td>Equirectangular 15° Longitudinal Meridian Bands (1h spacing) with Reticle HUD</td>
+                </tr>
+                <tr>
+                    <td class="spec-val">SOLAR MECHANISM</td>
+                    <td>Terminator Model</td>
+                    <td>Astronomical Solar Declination (Great Circle Zenith 90°) with Dynamic SVG Matrix</td>
+                </tr>
+                <tr>
+                    <td class="spec-val">ERGONOMICS</td>
+                    <td>Design System</td>
+                    <td>Chronos-01 Architectural Bento Layout (1px Hairlines, Tabular Numerals)</td>
+                </tr>
+                <tr>
+                    <td class="spec-val">SECURITY ARCHITECTURE</td>
+                    <td>Environment Variables</td>
+                    <td>Zero client secret leakage with Vite .env encapsulation and typed config loaders</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Mechanical Footer -->
+    <footer class="atlas-footer">
+        <div>HOROLOGIUM // GLOBAL TEMPORAL & MERIDIAN TELEMETRY SYSTEM • REF 2026.10</div>
+        <div>"Time is a great teacher, but unfortunately it kills all its pupils." — L. H. Berlioz</div>
+    </footer>
+
+    <script type="module">
+        // Live UTC and Local Clocks
+        function updateHomeClocks() {
+            const now = new Date();
+            const utcHours = String(now.getUTCHours()).padStart(2, '0');
+            const utcMins = String(now.getUTCMinutes()).padStart(2, '0');
+            const utcSecs = String(now.getUTCSeconds()).padStart(2, '0');
+            const utcClockEl = document.getElementById('homeUtcClock');
+            if (utcClockEl) utcClockEl.textContent = `${utcHours}:${utcMins}:${utcSecs} UTC`;
+
+            const devHours = String(now.getHours()).padStart(2, '0');
+            const devMins = String(now.getMinutes()).padStart(2, '0');
+            const devSecs = String(now.getSeconds()).padStart(2, '0');
+            const devClockEl = document.getElementById('homeDeviceClock');
+            if (devClockEl) devClockEl.textContent = `${devHours}:${devMins}:${devSecs}`;
+
+            // Approximate solar declination
+            const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+            const dayOfYear = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
+            const declination = -23.44 * Math.cos((2 * Math.PI / 365) * (dayOfYear + 10));
+            const dir = declination >= 0 ? 'N' : 'S';
+            const solarDecEl = document.getElementById('homeSolarDec');
+            if (solarDecEl) solarDecEl.textContent = `${Math.abs(declination).toFixed(1)}° ${dir}`;
+        }
+        updateHomeClocks();
+        setInterval(updateHomeClocks, 1000);
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('homeThemeToggle');
+        themeBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            themeBtn.textContent = isDark ? 'DECK' : 'ATLAS';
+            localStorage.setItem('horologium_theme', isDark ? 'dark' : 'light');
+        });
+
+        // Initialize theme from storage
+        if (localStorage.getItem('horologium_theme') === 'light' || localStorage.getItem('chronos_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            themeBtn.textContent = 'ATLAS';
+        }
+    </script>
+</body>
+</html>

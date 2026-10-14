@@ -1,198 +1,179 @@
-<div align="center">
+# HOROLOGIUM // Global Temporal & Meridian Telemetry System
 
-# 🌍 Global Times — On-Map Time Zones
-### *Interactive Vector World Clock & Global Timezone Explorer*
+> **A tier-1 interactive world timezone atlas, UTC meridian tracker, and temporal telemetry platform engineered with Swiss horological precision, embedded SQLite persistence, and an isolated Node.js API runtime.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/shaikimthiyas/On-Map-Time-Zones?style=flat&color=brightgreen)](https://github.com/shaikimthiyas/On-Map-Time-Zones/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/shaikimthiyas/On-Map-Time-Zones?style=flat&color=blue)](https://github.com/shaikimthiyas/On-Map-Time-Zones/network/members)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/shaikimthiyas/On-Map-Time-Zones/pulls)
-[![Vanilla JS](https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![HTML5](https://img.shields.io/badge/HTML-5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS-3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-
-<p align="center">
-  <b>Eliminate timezone confusion with a single click.</b><br>
-  Explore the world through an interactive SVG vector map that displays real-time local times and timezone abbreviations for every nation on Earth.
-</p>
-
-[Explore Map](#-how-it-works) • [Key Features](#-key-features) • [Quick Start](#-installation--local-setup) • [Architecture](#-system-architecture) • [Contributing](#-contributing)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-24.x-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-SQLite_(node:sqlite)-003B57?style=flat&logo=sqlite&logoColor=white)](https://nodejs.org/api/sqlite.html)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-34D399?style=flat)](LICENSE)
 
 ---
 
-</div>
+## 1. System Overview
 
-## 📌 Overview
+**Horologium** (named after the southern constellation *Horologium Oscillatorium* / "The Pendulum Clock") is a mature, low-latency temporal telemetry platform designed as an intermediate, production-ready system for high-reliability single-engineer operations.
 
-**Global Times (On-Map Time Zones)** is an intuitive, lightweight, and zero-dependency web application engineered for distributed remote teams, frequent travelers, international researchers, and global communicators.
-
-Navigating disparate time zones often requires juggling conversion tables, manual UTC offsets, or third-party search queries. **Global Times** simplifies this into a tactile geographical experience: simply hover over any region on the vector world map to identify the country, or click it to instantly retrieve and display its live local time, date, and timezone abbreviation via RESTful API integration.
-
----
-
-## ✨ Key Features
-
-- 🗺️ **High-Precision SVG Vector World Map** — Rendered with scalable vector paths for countries worldwide, ensuring crisp visual fidelity across any display density or zoom level.
-- ⚡ **Dynamic Cursor-Tracking HUD** — Real-time mouse tracking calculates pointer coordinates to project smooth, floating country labels directly above target regions.
-- 🕒 **Live Atomic Time Synchronization** — Seamlessly connected to the Abstract API Timezone service to deliver accurate local time readings, timestamps, and official timezone codes (e.g., IST, EST, GMT, JST).
-- 🎨 **Reactive Visual Feedback** — Interactive hover states illuminate hovered sovereign boundaries with distinctive fill transitions (`silver` highlight upon hover).
-- 📋 **Comprehensive Country Directory** — Includes a dedicated tabular timezone reference portal (`country.html`) styled with clean contrast for rapid alphabetical scanning.
-- 🚀 **Zero Build Pipeline & Zero Dependencies** — Native Vanilla JavaScript (ES6+), semantic HTML5, and pure CSS. No heavy framework overhead, bundler requirements, or build delays.
-- 📱 **Cross-Platform Responsive Layout** — Optimized for desktop displays, tablets, and mobile screens.
+- **Zero-Latency Client-Side Engine:** Native `Intl.DateTimeFormat` and IANA timezone computation eliminate latency and third-party API rate-limiting.
+- **Embedded SQLite Persistence (`node:sqlite`):** Native, zero-C++ dependency, embedded database managing operator clearances, persistent custom stations, and transmission logs.
+- **Secure Server-Side Time Proxy (`/api/time`):** Eliminates browser API key exposure with in-memory 60-second TTL caching and server-side fallback.
+- **Cryptographic Operator Clearance (`/api/auth`):** Native HMAC-SHA256 session tokens with scrypt-salted password hashes.
+- **Astronomical Solar Terminator:** Dynamic mathematical solar declination and subsolar meridian projection rendering the real-time day/night shadow boundary.
+- **24-Hour Mechanical Time Scrubber:** 96-tick radio scale tuner with a 1px Vermilion needle enabling instant simulated time travel.
+- **Bento Telemetry Matrix:** Docked multi-zone horological cells featuring dynamic working hours (09:00–17:00) daylight status ribbons.
+- **Geodesic Command Palette (`Cmd+K`):** Fuzzy query search across 220+ sovereign territories and IANA identifiers.
 
 ---
 
-## 🛠️ Technology Stack
-
-| Layer | Technologies & Tools | Description |
-| :--- | :--- | :--- |
-| **Core Architecture** | Vanilla JavaScript (ES6+) | Asynchronous fetch requests, DOM manipulation, coordinate math |
-| **Markup & Semantics** | HTML5 | Clean document structuring across landing, map, directory, and auth views |
-| **Styling & HUD** | CSS3 & Custom Design Tokens | Floating HUD cards, frosted glass overlays, animated hover transitions |
-| **Vector Engine** | SVG (Scalable Vector Graphics) | High-resolution geographic path definitions with viewbox coordinate scaling |
-| **External API** | Abstract API (Current Time REST API) | Real-time global timezone lookups and atomic datetime resolution |
-| **Iconography & Fonts** | FontAwesome 6 & Web Fonts | Crisp UI icons, typography hierarchy, and navigation glyphs |
-
----
-
-## 🏛️ System Architecture
+## 2. Full-Stack Production Architecture
 
 ```mermaid
-flowchart LR
-    A[User Cursor / Mouse] -->|Hover / Move| B(Vector Country Path)
-    B -->|Track clientX / clientY| C[Floating HUD Tooltip]
-    A -->|Click Country| D[Event Listener trigger]
-    D -->|GET /v1/current_time| E[Abstract Timezone API]
-    E -->|JSON Response datetime, timezone_abbrev| F[HUD Time Banner #timeCont]
-    F -->|Render| G[Live Local Time Display]
+graph TD
+    Client([Browser Navigator]) --> VHost[Vite Dev :5173 / Node Prod :3000]
+
+    subgraph "Frontend Layer (Vite + ES Modules)"
+        VHost --> Index[index.html // Canonical Root]
+        VHost --> MapView[src/pages/map.html // Atlas Flight Deck]
+        VHost --> DirView[src/pages/country.html // Universal Directory]
+        VHost --> AuthView[src/pages/auth.html // Operator Clearance]
+        VHost --> ContactView[src/pages/contact.html // Telemetry Registry]
+        MapView --> Runtime[src/main.js // Core Orchestrator]
+    end
+
+    subgraph "Backend API Layer (server/)"
+        VHost -- "/api/*" --> ExpressApp[server/app.js // Express REST Engine]
+        ExpressApp --> RateLimiter[middleware/rateLimiter.js]
+        ExpressApp --> TimeCtrl[controllers/timeController.js // Cached Proxy]
+        ExpressApp --> AuthCtrl[controllers/authController.js // Scrypt Auth]
+        ExpressApp --> PinsCtrl[controllers/pinsController.js // Station CRUD]
+        ExpressApp --> InqCtrl[controllers/inquiryController.js // Transmissions]
+    end
+
+    subgraph "Embedded Data Layer (server/db/)"
+        TimeCtrl -.-> RemoteAPI[AbstractAPI / WorldTimeAPI]
+        AuthCtrl & PinsCtrl & InqCtrl --> NativeSQLite[(server/data/horologium.db // node:sqlite WAL)]
+    end
 ```
 
 ---
 
-## 📁 Repository Structure
+## 3. Directory Structure
 
 ```text
-On-Map-Time-Zones/
-├── 📄 home.html         # Main dashboard and welcome landing portal
-├── 📄 intro.html        # Animated intro splash screen with redirect countdown
-├── 📄 map.html          # Core interactive vector world map interface
-├── 📄 country.html      # Tabular country timezone catalog and lookup directory
-├── 📄 contact.html      # User feedback and inquiry transmission interface
-├── 📄 login.html        # Authentication and member sign-in screen
-├── 📄 script.js         # Core application logic, event listeners, and API integration
-├── 📄 style.css         # Styling system, HUD overlays, tooltips, and map layout
-├── 📄 redirect.js       # Auto-redirection router between intro and home page
-└── 📄 README.md         # Comprehensive project documentation
+horologium/
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # Automated CI pipeline (Build, Lint & Health Check)
+├── .vscode/
+│   ├── settings.json          # Workspace formatting rules
+│   └── extensions.json        # Recommended toolchain
+├── public/
+│   ├── assets/                # Icons & vector assets
+│   ├── favicon.svg            # Meridian monogram favicon
+│   ├── robots.txt             # Search engine crawler policies
+│   └── sitemap.xml            # Geodesic XML sitemap
+├── server/
+│   ├── controllers/
+│   │   ├── authController.js  # Scrypt password hashing & HMAC session tokens
+│   │   ├── inquiryController.js # Transmission registry logger
+│   │   ├── pinsController.js  # Pinned telemetry stations CRUD
+│   │   └── timeController.js  # Server-side API proxy with 60s memory cache
+│   ├── data/
+│   │   └── horologium.db      # Embedded SQLite database (Ignored by Git)
+│   ├── db/
+│   │   └── database.js        # Native node:sqlite connection, schema & seeds
+│   ├── middleware/
+│   │   ├── authMiddleware.js  # Operator Bearer token guard
+│   │   └── rateLimiter.js     # Sliding window rate limiter
+│   ├── routes/
+│   │   └── api.js             # Central REST routing table
+│   └── app.js                 # Express app setup & production static server
+├── src/
+│   ├── api/
+│   │   ├── httpClient.js      # Centralized fetch wrapper with abort timeout
+│   │   └── timeService.js     # Client API client with proxy & Intl fallback
+│   ├── components/
+│   │   ├── clock/             # ScrubberController & TelemetryMatrix
+│   │   ├── map/               # MapController (SVG, Graticules, Terminator)
+│   │   └── ui/                # CommandPalette (Cmd+K) & NavigationHeader
+│   ├── config/                # env.js & constants.js
+│   ├── data/                  # countries.data.js (220 nations)
+│   ├── pages/                 # map.html, country.html, auth.html, contact.html
+│   ├── styles/                # tokens.css, base.css, layout.css, main.css
+│   ├── utils/                 # dom.js, router.js, timeMath.js
+│   └── main.js                # Primary application bootstrap
+├── .env                       # Local secrets (NEVER COMMITTED)
+├── .env.example               # Committed template defining required keys
+├── .gitignore                 # Production-grade Git ignore rules
+├── docker-compose.yml         # Container orchestration manifest
+├── Dockerfile                 # Multi-stage production container build
+├── index.html                 # Single Unified Root Entry Point
+├── package.json               # Scripts: dev, dev:server, dev:client, build, start
+├── server.js                  # Production server entrypoint
+├── vite.config.js             # Multi-page build & /api proxy configuration
+└── README.md                  # Comprehensive architectural reference
 ```
 
 ---
 
-## ⚙️ Installation & Local Setup
+## 4. REST API Reference
 
-Running the project locally takes less than a minute. No `npm install` or package configuration is required!
+| Endpoint | Method | Clearance | Description |
+|---|---|---|---|
+| `/api/health` | `GET` | Public | Telemetry health: uptime, SQLite connection, server UTC time |
+| `/api/time?location=:loc` | `GET` | Public | Cached proxy to atomic time service with fallback |
+| `/api/auth/login` | `POST` | Public | Authenticates callsign/cipher; returns signed clearance token |
+| `/api/auth/me` | `GET` | Operator | Returns session details for current token |
+| `/api/auth/logout` | `POST` | Operator | Revokes operator clearance token |
+| `/api/pins` | `GET` | Public | Returns ordered pinned telemetry stations |
+| `/api/pins` | `POST` | Operator | Pins a new station to the global horology matrix |
+| `/api/pins/:id` | `DELETE` | Operator | Removes a pinned station |
+| `/api/transmissions` | `POST` | Public | Logs a message to the Horologium registry (Rate-limited) |
+| `/api/transmissions` | `GET` | Operator | Retrieves incoming telemetry transmissions |
 
-### 1️⃣ Clone the Repository
+---
 
+## 5. Local Setup & Production Execution
+
+### Prerequisites
+- **Node.js 24+** (includes native `node:sqlite`)
+- **npm 10+**
+
+### Development (Frontend + Backend concurrently)
 ```bash
-git clone https://github.com/shaikimthiyas/On-Map-Time-Zones.git
-cd On-Map-Time-Zones
+# 1. Install dependencies
+npm install
+
+# 2. Run both Vite (:5173) and Express API (:3001) with live proxy
+npm run dev
 ```
 
-### 2️⃣ Launch the Application
-
-You can launch the application through any of the following methods:
-
-#### Option A: Direct Browser Launch
-Double-click `home.html` (or `map.html`) to open directly in Chrome, Firefox, Safari, or Edge.
-
-#### Option B: Python Local Server (Recommended)
+### Standalone Production Server
 ```bash
-# Python 3.x
-python -m http.server 8000
-```
-Open [http://localhost:8000/home.html](http://localhost:8000/home.html) in your browser.
+# 1. Compile optimized multi-page client bundle
+npm run build
 
-#### Option C: Node.js / npx serve
+# 2. Launch production server (Serves dist/ and /api on port 3001)
+npm start
+```
+
+### One-Command Docker Deployment
 ```bash
-npx serve .
+docker compose up -d
 ```
-
-#### Option D: VS Code Live Server Extension
-Right-click on `home.html` in VS Code and select **"Open with Live Server"**.
+Access the application at `http://localhost:3000/`.
 
 ---
 
-## 🎮 How It Works
+## 6. One-Time Workspace Directory Rename Note
 
-1. **Launch the Map**: Navigate to `map.html` from the home screen.
-2. **Inspect Territories**: Move your mouse across the world map. The floating indicator will reveal the country's name as your cursor glides across borders.
-3. **Fetch Local Time**: Click on any country. The client fires an asynchronous API request:
-   ```javascript
-   const api_url = `https://timezone.abstractapi.com/v1/current_time/?api_key=${API_KEY}&location=${countryId}`;
-   ```
-4. **Read Real-Time Clock**: The floating top banner instantly updates with:
-   $$\text{[Country Name]'s time} = \text{YYYY-MM-DD HH:MM:SS} \quad [\text{Timezone Code}]$$
+Because the IDE holds open file locks on the root folder while running:
+1. Close the workspace in your IDE (`File > Close Folder`).
+2. Rename the directory from `onmap-timezones.html` to `horologium`.
+3. Re-open the newly named folder `horologium` in your IDE.
 
 ---
 
-## 🔑 API Configuration (Optional)
+## 7. License
 
-The application utilizes the **Abstract API Current Time API**. 
-If you wish to configure your own free API key for higher rate limits:
-
-1. Sign up for a free key at [Abstract API Timezone](https://www.abstractapi.com/api/timezone-api).
-2. Open [script.js](file:///script.js) and update the `api_key` parameter in the `getUser` function:
-   ```javascript
-   const api_url = `https://timezone.abstractapi.com/v1/current_time/?api_key=YOUR_API_KEY_HERE&location=${place}`;
-   ```
-
----
-
-## 🗺️ Roadmap & Upcoming Enhancements
-
-- [ ] **Autocomplete Search Bar** — Jump directly to and highlight any country via keyboard input.
-- [ ] **Browser Native Offline Mode** — Graceful fallback using `Intl.DateTimeFormat` when offline or if API limits are reached.
-- [ ] **Solar Day/Night Terminator** — Real-time shadow projection showing day and night halves of the globe.
-- [ ] **Favorite Cities Dock** — Pin frequently watched time zones to a persistent quick-access drawer.
-- [ ] **Dark / Light Theme Toggle** — System-aware palette switcher for comfortable nighttime navigation.
-
----
-
-## 🤝 Contributing
-
-Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. **Fork the Project** (`Click Fork at top-right`)
-2. **Create your Feature Branch**:
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your Changes**:
-   ```bash
-   git commit -m "feat: add interactive search autocomplete"
-   ```
-4. **Push to the Branch**:
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. **Open a Pull Request** via GitHub.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details.
-
----
-
-## 👤 Author & Maintainer
-
-**Shaik Mohamed Imthiyas**
-- GitHub: [@shaikimthiyas](https://github.com/shaikimthiyas)
-- Project: [On-Map-Time-Zones](https://github.com/shaikimthiyas/On-Map-Time-Zones)
-
----
-
-<div align="center">
-  <sub>Built with ❤️ for global explorers and distributed teams worldwide. If you find this project useful, please consider giving it a ⭐ on GitHub!</sub>
-</div>
+Distributed under the MIT License. Built with Swiss horological discipline by **Shaik Imthiyas**.
