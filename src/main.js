@@ -57,6 +57,7 @@ class HorologiumApp {
       }
     });
     this.telemetryMatrix.setFormat(this.navHeader.is24h);
+    await this.telemetryMatrix.loadRemotePins();
 
     // 3. Initialize Interactive World Map Controller
     this.mapController = new MapController({

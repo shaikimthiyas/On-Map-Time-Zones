@@ -22,6 +22,25 @@ export class TelemetryMatrix {
     this.is24h = is24h;
   }
 
+  async loadRemotePins() {
+    try {
+      const res = await fetch('/api/pins');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.pins) && data.pins.length > 0) {
+          this.pinnedCities = data.pins.map(p => ({
+            id: p.id,
+            city: p.city,
+            country: p.country,
+            tz: p.tz
+          }));
+        }
+      }
+    } catch (e) {
+      // Keep defaults on network error
+    }
+  }
+
   render(activeDate) {
     if (!this.container) return;
 

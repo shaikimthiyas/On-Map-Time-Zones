@@ -24,10 +24,6 @@ export class TimeService {
    * Rate-limited to at most 1 call per 1.5s to avoid 429 quota exhaustion.
    */
   static async verifyWithRemoteApi(countryName) {
-    if (!ENV.TIME_API_KEY) {
-      return null;
-    }
-
     const now = Date.now();
     if (now - lastCallTimestamp < MIN_API_CALL_INTERVAL_MS) {
       return null;
@@ -35,22 +31,24 @@ export class TimeService {
     lastCallTimestamp = now;
 
     try {
-      const url = `${ENV.TIME_API_BASE_URL}?api_key=${ENV.TIME_API_KEY}&location=${encodeURIComponent(countryName)}`;
-      const res = await fetchWithTimeout(url, {}, 3500);
+      // 1. Try secure server-side proxy
+      const proxyUrl = `/api/time?location=${encodeURIComponent(countryName)}`;
+      const res = await fetchWithTimeout(proxyUrl, {}, 3000);
 
       if (res.ok) {
         const data = await res.json();
         return {
           datetime: data.datetime,
-          timezone: data.timezone_name,
-          abbreviation: data.timezone_abbreviation,
-          offset: data.gmt_offset
+          timezone: data.timezone,
+          abbreviation: data.abbreviation,
+          offset: data.offset,
+          source: data.source || 'server_proxy'
         };
       }
     } catch (err) {
-      // Graceful fallback to native Intl
-      return null;
+      // Network or offline fallback
     }
+
     return null;
   }
 

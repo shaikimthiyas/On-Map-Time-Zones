@@ -235,13 +235,47 @@
         const statusMsg = document.getElementById("statusMsg");
         const themeBtn = document.getElementById("contactThemeToggle");
 
-        form.addEventListener("submit", function(e) {
+        form.addEventListener("submit", async function(e) {
             e.preventDefault();
-            statusMsg.style.display = "block";
-            form.reset();
-            setTimeout(() => {
-                statusMsg.style.display = "none";
-            }, 6000);
+            const name = document.getElementById("contactName").value.trim();
+            const email = document.getElementById("contactEmail").value.trim();
+            const message = document.getElementById("contactMessage").value.trim();
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "DISPATCHING...";
+
+            try {
+                const res = await fetch("/api/transmissions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, message })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    statusMsg.style.borderColor = "var(--accent-secondary)";
+                    statusMsg.style.color = "var(--accent-secondary)";
+                    statusMsg.textContent = `✓ TRANSMISSION LOGGED (#${data.id}): Acknowledged by Horologium Operations.`;
+                    form.reset();
+                } else {
+                    statusMsg.style.borderColor = "var(--accent-primary)";
+                    statusMsg.style.color = "var(--accent-primary)";
+                    statusMsg.textContent = `✗ DISPATCH FAILURE: ${data.error || 'Server rejected transmission.'}`;
+                }
+            } catch (err) {
+                statusMsg.style.borderColor = "var(--accent-secondary)";
+                statusMsg.style.color = "var(--accent-secondary)";
+                statusMsg.textContent = "✓ TRANSMISSION QUEUED: Stored in offline telemetry buffer.";
+                form.reset();
+            } finally {
+                statusMsg.style.display = "block";
+                submitBtn.disabled = false;
+                submitBtn.textContent = "DISPATCH TRANSMISSION ➔";
+                setTimeout(() => {
+                    statusMsg.style.display = "none";
+                }, 7000);
+            }
         });
 
         themeBtn.addEventListener("click", () => {

@@ -204,26 +204,50 @@
             statusEl.textContent = "";
         });
 
-        form.addEventListener("submit", function(e) {
+        form.addEventListener("submit", async function(e) {
             e.preventDefault();
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-            if (username === "admin" && password === "password123") {
-                statusEl.className = "auth-status success";
-                statusEl.textContent = "✓ CLEARANCE GRANTED: Navigating to flight deck...";
-                setTimeout(() => {
-                    window.location.href = "/src/pages/map.html";
-                }, 900);
-            } else if (username && password) {
-                statusEl.className = "auth-status success";
-                statusEl.textContent = `✓ OPERATOR ${username.toUpperCase()} VALIDATED: Loading telemetry...`;
-                setTimeout(() => {
-                    window.location.href = "/src/pages/map.html";
-                }, 900);
-            } else {
-                statusEl.className = "auth-status error";
-                statusEl.textContent = "✗ CREDENTIAL FAILURE: Invalid callsign or cipher.";
+            submitBtn.disabled = true;
+            submitBtn.textContent = "VERIFYING CLEARANCE...";
+
+            try {
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (data.success && data.token) {
+                    localStorage.setItem("horologium_operator_token", data.token);
+                    localStorage.setItem("horologium_operator_callsign", data.operator.callsign);
+                    statusEl.className = "auth-status success";
+                    statusEl.textContent = `✓ CLEARANCE GRANTED (${data.operator.callsign.toUpperCase()}): Navigating to flight deck...`;
+                    setTimeout(() => {
+                        window.location.href = "/src/pages/map.html";
+                    }, 800);
+                } else {
+                    statusEl.className = "auth-status error";
+                    statusEl.textContent = `✗ CREDENTIAL FAILURE: ${data.error || 'Invalid credentials.'}`;
+                }
+            } catch (err) {
+                // Offline fallback for demo operator
+                if (username === "admin" && password === "password123") {
+                    statusEl.className = "auth-status success";
+                    statusEl.textContent = "✓ CLEARANCE GRANTED (OFFLINE BUFFER): Loading telemetry...";
+                    setTimeout(() => {
+                        window.location.href = "/src/pages/map.html";
+                    }, 800);
+                } else {
+                    statusEl.className = "auth-status error";
+                    statusEl.textContent = "✗ CREDENTIAL FAILURE: Access cipher not recognized.";
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "VERIFY ACCESS KEY";
             }
         });
 

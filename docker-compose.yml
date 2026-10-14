@@ -1,0 +1,21 @@
+services:
+  horologium:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: horologium-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - SESSION_SECRET=horologium_production_meridian_key_2026
+    volumes:
+      # Persist SQLite database volume across container restarts
+      - horologium_data:/app/server/data
+
+volumes:
+  horologium_data:
+    driver: local

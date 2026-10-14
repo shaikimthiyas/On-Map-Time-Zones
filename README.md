@@ -1,58 +1,57 @@
 # HOROLOGIUM // Global Temporal & Meridian Telemetry System
 
-> **A tier-1 interactive world timezone atlas, UTC meridian tracker, and live temporal telemetry platform built with Swiss horological precision.**
+> **A tier-1 interactive world timezone atlas, UTC meridian tracker, and temporal telemetry platform engineered with Swiss horological precision, embedded SQLite persistence, and an isolated Node.js API runtime.**
 
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![ES Modules](https://img.shields.io/badge/ES_Modules-Strict-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
-[![Design System](https://img.shields.io/badge/Design_System-Chronos--01-FF4D2E?style=flat)](https://github.com/shaikimthiyas/On-Map-Time-Zones)
+[![Node.js](https://img.shields.io/badge/Node.js-24.x-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-SQLite_(node:sqlite)-003B57?style=flat&logo=sqlite&logoColor=white)](https://nodejs.org/api/sqlite.html)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-34D399?style=flat)](LICENSE)
 
 ---
 
 ## 1. System Overview
 
-**Horologium** (named after the southern celestial constellation *Horologium Oscillatorium* / "The Pendulum Clock") is a high-precision, low-latency temporal telemetry platform. 
+**Horologium** (named after the southern constellation *Horologium Oscillatorium* / "The Pendulum Clock") is a mature, low-latency temporal telemetry platform designed as an intermediate, production-ready system for high-reliability single-engineer operations.
 
-Combining the aesthetic discipline of Swiss horology (Braun, Dieter Rams, Patek Philippe world timers) with the functional rigor of aviation flight telemetry and cartographic geodesy:
-- **Zero-Latency Client-Side Horology:** Native `Intl.DateTimeFormat` and IANA timezone computation eliminate latency and third-party API rate-limiting.
-- **Astronomical Solar Terminator:** Mathematical solar declination and subsolar meridian projection render the real-time day/night shadow boundary directly across equirectangular cartography.
-- **24-Hour Mechanical Time Scrubber:** 96-tick radio scale tuner with a 1px Vermilion needle enabling instant simulated time travel across all global meridian bands.
-- **Bento Telemetry Matrix:** Docked multi-zone horological cells featuring dynamic 24-hour working hours (09:00–17:00) daylight status ribbons.
-- **Geodesic Command Palette (`Cmd+K`):** Substring and fuzzy query search across 220+ sovereign territories and IANA identifiers.
+- **Zero-Latency Client-Side Engine:** Native `Intl.DateTimeFormat` and IANA timezone computation eliminate latency and third-party API rate-limiting.
+- **Embedded SQLite Persistence (`node:sqlite`):** Native, zero-C++ dependency, embedded database managing operator clearances, persistent custom stations, and transmission logs.
+- **Secure Server-Side Time Proxy (`/api/time`):** Eliminates browser API key exposure with in-memory 60-second TTL caching and server-side fallback.
+- **Cryptographic Operator Clearance (`/api/auth`):** Native HMAC-SHA256 session tokens with scrypt-salted password hashes.
+- **Astronomical Solar Terminator:** Dynamic mathematical solar declination and subsolar meridian projection rendering the real-time day/night shadow boundary.
+- **24-Hour Mechanical Time Scrubber:** 96-tick radio scale tuner with a 1px Vermilion needle enabling instant simulated time travel.
+- **Bento Telemetry Matrix:** Docked multi-zone horological cells featuring dynamic working hours (09:00–17:00) daylight status ribbons.
+- **Geodesic Command Palette (`Cmd+K`):** Fuzzy query search across 220+ sovereign territories and IANA identifiers.
 
 ---
 
-## 2. Architectural Blueprint
+## 2. Full-Stack Production Architecture
 
 ```mermaid
 graph TD
-    User([User / Navigator]) --> Index[index.html // Canonical Root]
-    Index --> Atlas[src/pages/map.html // Flight Deck Atlas]
-    Index --> Directory[src/pages/country.html // Universal Directory]
-    Index --> Auth[src/pages/auth.html // Operator Clearance]
-    Index --> Contact[src/pages/contact.html // Telemetry Registry]
+    Client([Browser Navigator]) --> VHost[Vite Dev :5173 / Node Prod :3000]
 
-    subgraph "Core Runtime (src/main.js)"
-        Atlas --> MC[MapController]
-        Atlas --> SC[ScrubberController]
-        Atlas --> TM[TelemetryMatrix]
-        Atlas --> CP[CommandPalette]
-        Atlas --> NH[NavigationHeader]
+    subgraph "Frontend Layer (Vite + ES Modules)"
+        VHost --> Index[index.html // Canonical Root]
+        VHost --> MapView[src/pages/map.html // Atlas Flight Deck]
+        VHost --> DirView[src/pages/country.html // Universal Directory]
+        VHost --> AuthView[src/pages/auth.html // Operator Clearance]
+        VHost --> ContactView[src/pages/contact.html // Telemetry Registry]
+        MapView --> Runtime[src/main.js // Core Orchestrator]
     end
 
-    subgraph "Domain Engines & Data Layer"
-        TM & MC & Directory --> CD[(countries.data.js)]
-        MC & NH --> TMATH[utils/timeMath.js // Declination & Terminator]
-        NH & SC --> TS[api/timeService.js // Intl Engine + Verification]
-        TS --> HTTP[api/httpClient.js // Abortable Fetch Wrapper]
-        TS --> ENV_CFG[config/env.js // import.meta.env Loader]
+    subgraph "Backend API Layer (server/)"
+        VHost -- "/api/*" --> ExpressApp[server/app.js // Express REST Engine]
+        ExpressApp --> RateLimiter[middleware/rateLimiter.js]
+        ExpressApp --> TimeCtrl[controllers/timeController.js // Cached Proxy]
+        ExpressApp --> AuthCtrl[controllers/authController.js // Scrypt Auth]
+        ExpressApp --> PinsCtrl[controllers/pinsController.js // Station CRUD]
+        ExpressApp --> InqCtrl[controllers/inquiryController.js // Transmissions]
     end
 
-    subgraph "Chronos-01 Design System"
-        Atlas & Directory & Auth & Contact & Index -.-> CSS[src/styles/main.css]
-        CSS --> TOKENS[tokens.css // Hairlines, Alabaster/Obsidian, Vermilion]
-        CSS --> BASE[base.css // Resets, Tabular-Nums]
-        CSS --> LAYOUT[layout.css // Bento Grid, HUD, Clocks]
+    subgraph "Embedded Data Layer (server/db/)"
+        TimeCtrl -.-> RemoteAPI[AbstractAPI / WorldTimeAPI]
+        AuthCtrl & PinsCtrl & InqCtrl --> NativeSQLite[(server/data/horologium.db // node:sqlite WAL)]
     end
 ```
 
@@ -62,134 +61,119 @@ graph TD
 
 ```text
 horologium/
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # Automated CI pipeline (Build, Lint & Health Check)
 ├── .vscode/
-│   ├── settings.json          # Production workspace formatting & linting rules
-│   └── extensions.json        # Recommended VS Code extensions
+│   ├── settings.json          # Workspace formatting rules
+│   └── extensions.json        # Recommended toolchain
 ├── public/
-│   ├── assets/
-│   │   ├── icons/             # SVG telemetry symbology
-│   │   └── geo/               # Static TopoJSON / GeoJSON world map vectors
-│   └── favicon.svg            # Precision meridian monogram favicon
+│   ├── assets/                # Icons & vector assets
+│   ├── favicon.svg            # Meridian monogram favicon
+│   ├── robots.txt             # Search engine crawler policies
+│   └── sitemap.xml            # Geodesic XML sitemap
+├── server/
+│   ├── controllers/
+│   │   ├── authController.js  # Scrypt password hashing & HMAC session tokens
+│   │   ├── inquiryController.js # Transmission registry logger
+│   │   ├── pinsController.js  # Pinned telemetry stations CRUD
+│   │   └── timeController.js  # Server-side API proxy with 60s memory cache
+│   ├── data/
+│   │   └── horologium.db      # Embedded SQLite database (Ignored by Git)
+│   ├── db/
+│   │   └── database.js        # Native node:sqlite connection, schema & seeds
+│   ├── middleware/
+│   │   ├── authMiddleware.js  # Operator Bearer token guard
+│   │   └── rateLimiter.js     # Sliding window rate limiter
+│   ├── routes/
+│   │   └── api.js             # Central REST routing table
+│   └── app.js                 # Express app setup & production static server
 ├── src/
 │   ├── api/
-│   │   ├── httpClient.js      # Centralized fetch wrapper with timeout & error handling
-│   │   └── timeService.js     # Timezone API client with native Intl fallback
-│   ├── config/
-│   │   ├── env.js             # Validated environment loader (import.meta.env)
-│   │   └── constants.js       # App-wide constants, default meridians, intervals
-│   ├── data/
-│   │   └── countries.data.js  # Modularized 220-nation ISO/IANA geographical database
+│   │   ├── httpClient.js      # Centralized fetch wrapper with abort timeout
+│   │   └── timeService.js     # Client API client with proxy & Intl fallback
 │   ├── components/
-│   │   ├── map/
-│   │   │   └── mapController.js    # Interactive SVG world map, graticules, terminator
-│   │   ├── clock/
-│   │   │   ├── scrubberController.js # 24h mechanical aperture ruler scrubber
-│   │   │   └── telemetryMatrix.js    # Docked Bento horology matrix with business hours
-│   │   └── ui/
-│   │       ├── commandPalette.js     # Cmd+K fuzzy / substring search palette
-│   │       └── navigation.js         # Master UTC ticker, solar dec, format & theme toggles
-│   ├── pages/
-│   │   ├── map.html           # Primary interactive atlas flight deck
-│   │   ├── country.html       # Geodesic country & multi-zone breakdown directory
-│   │   ├── auth.html          # Operator authentication clearance
-│   │   └── contact.html       # Communications & telemetry dispatch registry
-│   ├── styles/
-│   │   ├── tokens.css         # Design system variables (Hairlines, Colors, Fonts)
-│   │   ├── base.css           # Resets, typography rules, tabular-nums enforcement
-│   │   ├── layout.css         # Exposed 1px Bento Grid & HUD architecture
-│   │   └── main.css           # Master stylesheet importing tokens, base, and layout
-│   ├── utils/
-│   │   ├── dom.js             # Viewport boundary positioning & DOM helpers
-│   │   ├── router.js          # Clean query param routing & navigation helpers
-│   │   └── timeMath.js        # Solar declination, subsolar lon, and terminator geometry
-│   └── main.js                # Application bootstrap coordinating all subsystems
-├── index.html                 # Single Unified Root Entry Point
-├── .env                       # Local environment secrets (NEVER COMMITTED)
-├── .env.example               # Committed template defining required environment keys
+│   │   ├── clock/             # ScrubberController & TelemetryMatrix
+│   │   ├── map/               # MapController (SVG, Graticules, Terminator)
+│   │   └── ui/                # CommandPalette (Cmd+K) & NavigationHeader
+│   ├── config/                # env.js & constants.js
+│   ├── data/                  # countries.data.js (220 nations)
+│   ├── pages/                 # map.html, country.html, auth.html, contact.html
+│   ├── styles/                # tokens.css, base.css, layout.css, main.css
+│   ├── utils/                 # dom.js, router.js, timeMath.js
+│   └── main.js                # Primary application bootstrap
+├── .env                       # Local secrets (NEVER COMMITTED)
+├── .env.example               # Committed template defining required keys
 ├── .gitignore                 # Production-grade Git ignore rules
-├── vite.config.js             # Multi-page Vite build configuration
-├── package.json               # Package manifests & lifecycle scripts
-└── README.md                  # Executive architectural documentation
+├── docker-compose.yml         # Container orchestration manifest
+├── Dockerfile                 # Multi-stage production container build
+├── index.html                 # Single Unified Root Entry Point
+├── package.json               # Scripts: dev, dev:server, dev:client, build, start
+├── server.js                  # Production server entrypoint
+├── vite.config.js             # Multi-page build & /api proxy configuration
+└── README.md                  # Comprehensive architectural reference
 ```
 
 ---
 
-## 4. Environment & Security Hardening
+## 4. REST API Reference
 
-Horologium encapsulates all third-party endpoints and API credentials behind standard Vite environment variables. **No secret keys are bundled in client assets.**
-
-### Environment Configuration (`.env`)
-
-Copy the template file to create your local environment:
-```bash
-cp .env.example .env
-```
-
-Variables defined in `.env`:
-```ini
-# Application Identity
-VITE_APP_NAME="Horologium"
-VITE_APP_ENV="development"
-
-# Temporal Telemetry Services
-VITE_TIME_API_BASE_URL="https://timezone.abstractapi.com/v1/current_time"
-VITE_TIME_API_KEY="your_api_key_here"
-
-# Geodesic & Cartographic APIs
-VITE_GEO_API_KEY=""
-
-# Engine Resilience Flags
-VITE_ENABLE_FALLBACK_INTL="true"
-```
-
-> [!NOTE]
-> Even if external time APIs encounter rate limits (e.g., HTTP 429), `src/api/timeService.js` automatically cascades to native browser `Intl.DateTimeFormat` with sub-millisecond precision.
+| Endpoint | Method | Clearance | Description |
+|---|---|---|---|
+| `/api/health` | `GET` | Public | Telemetry health: uptime, SQLite connection, server UTC time |
+| `/api/time?location=:loc` | `GET` | Public | Cached proxy to atomic time service with fallback |
+| `/api/auth/login` | `POST` | Public | Authenticates callsign/cipher; returns signed clearance token |
+| `/api/auth/me` | `GET` | Operator | Returns session details for current token |
+| `/api/auth/logout` | `POST` | Operator | Revokes operator clearance token |
+| `/api/pins` | `GET` | Public | Returns ordered pinned telemetry stations |
+| `/api/pins` | `POST` | Operator | Pins a new station to the global horology matrix |
+| `/api/pins/:id` | `DELETE` | Operator | Removes a pinned station |
+| `/api/transmissions` | `POST` | Public | Logs a message to the Horologium registry (Rate-limited) |
+| `/api/transmissions` | `GET` | Operator | Retrieves incoming telemetry transmissions |
 
 ---
 
-## 5. Local Setup & Development
+## 5. Local Setup & Production Execution
 
 ### Prerequisites
-- Node.js 18.0+ or Node.js 20.0+ LTS
-- npm 9.0+ or pnpm / yarn
+- **Node.js 24+** (includes native `node:sqlite`)
+- **npm 10+**
 
-### Installation & Execution
-
+### Development (Frontend + Backend concurrently)
 ```bash
-# 1. Clone repository
-git clone https://github.com/shaikimthiyas/On-Map-Time-Zones.git horologium
-cd horologium
-
-# 2. Install dependencies
+# 1. Install dependencies
 npm install
 
-# 3. Start local development server
+# 2. Run both Vite (:5173) and Express API (:3001) with live proxy
 npm run dev
-
-# 4. Build production bundle
-npm run build
-
-# 5. Preview production build locally
-npm run preview
 ```
 
-The application will be accessible at `http://localhost:5173/`.
+### Standalone Production Server
+```bash
+# 1. Compile optimized multi-page client bundle
+npm run build
+
+# 2. Launch production server (Serves dist/ and /api on port 3001)
+npm start
+```
+
+### One-Command Docker Deployment
+```bash
+docker compose up -d
+```
+Access the application at `http://localhost:3000/`.
 
 ---
 
-## 6. Design System Specification (Chronos-01)
+## 6. One-Time Workspace Directory Rename Note
 
-| Subsystem | Specification |
-|---|---|
-| **Editorial Typography** | `Instrument Serif` (Italicized accents), `Plus Jakarta Sans` (Legibility UI), `JetBrains Mono` (Tabular Telemetry) |
-| **Color Archetype** | **Obsidian Night Deck** (`#080C14` canvas, `#0E131F` surface) / **Warm Alabaster Atlas** (`#F7F6F2` canvas, `#FFFFFF` surface) |
-| **Structural Hairlines**| `1px solid var(--border-hairline)` (`#1E2638` in dark mode) without rounded bubble frames |
-| **Accents** | Vermilion Indicator (`#FF4D2E`), Radar Green Working Hours (`#10B981`), Amber Warning (`#F59E0B`) |
-| **Numerals** | Strict `font-variant-numeric: tabular-nums` preventing layout jitter during live second ticking |
+Because the IDE holds open file locks on the root folder while running:
+1. Close the workspace in your IDE (`File > Close Folder`).
+2. Rename the directory from `onmap-timezones.html` to `horologium`.
+3. Re-open the newly named folder `horologium` in your IDE.
 
 ---
 
-## 7. License & Credits
+## 7. License
 
-Architected and maintained by **Shaik Imthiyas** and the **Horologium Engineering Group**.  
-Distributed under the MIT License.
+Distributed under the MIT License. Built with Swiss horological discipline by **Shaik Imthiyas**.
