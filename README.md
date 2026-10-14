@@ -1,198 +1,195 @@
-<div align="center">
+# HOROLOGIUM // Global Temporal & Meridian Telemetry System
 
-# 🌍 Global Times — On-Map Time Zones
-### *Interactive Vector World Clock & Global Timezone Explorer*
+> **A tier-1 interactive world timezone atlas, UTC meridian tracker, and live temporal telemetry platform built with Swiss horological precision.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/shaikimthiyas/On-Map-Time-Zones?style=flat&color=brightgreen)](https://github.com/shaikimthiyas/On-Map-Time-Zones/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/shaikimthiyas/On-Map-Time-Zones?style=flat&color=blue)](https://github.com/shaikimthiyas/On-Map-Time-Zones/network/members)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/shaikimthiyas/On-Map-Time-Zones/pulls)
-[![Vanilla JS](https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![HTML5](https://img.shields.io/badge/HTML-5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS-3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-
-<p align="center">
-  <b>Eliminate timezone confusion with a single click.</b><br>
-  Explore the world through an interactive SVG vector map that displays real-time local times and timezone abbreviations for every nation on Earth.
-</p>
-
-[Explore Map](#-how-it-works) • [Key Features](#-key-features) • [Quick Start](#-installation--local-setup) • [Architecture](#-system-architecture) • [Contributing](#-contributing)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![ES Modules](https://img.shields.io/badge/ES_Modules-Strict-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+[![Design System](https://img.shields.io/badge/Design_System-Chronos--01-FF4D2E?style=flat)](https://github.com/shaikimthiyas/On-Map-Time-Zones)
+[![License: MIT](https://img.shields.io/badge/License-MIT-34D399?style=flat)](LICENSE)
 
 ---
 
-</div>
+## 1. System Overview
 
-## 📌 Overview
+**Horologium** (named after the southern celestial constellation *Horologium Oscillatorium* / "The Pendulum Clock") is a high-precision, low-latency temporal telemetry platform. 
 
-**Global Times (On-Map Time Zones)** is an intuitive, lightweight, and zero-dependency web application engineered for distributed remote teams, frequent travelers, international researchers, and global communicators.
-
-Navigating disparate time zones often requires juggling conversion tables, manual UTC offsets, or third-party search queries. **Global Times** simplifies this into a tactile geographical experience: simply hover over any region on the vector world map to identify the country, or click it to instantly retrieve and display its live local time, date, and timezone abbreviation via RESTful API integration.
-
----
-
-## ✨ Key Features
-
-- 🗺️ **High-Precision SVG Vector World Map** — Rendered with scalable vector paths for countries worldwide, ensuring crisp visual fidelity across any display density or zoom level.
-- ⚡ **Dynamic Cursor-Tracking HUD** — Real-time mouse tracking calculates pointer coordinates to project smooth, floating country labels directly above target regions.
-- 🕒 **Live Atomic Time Synchronization** — Seamlessly connected to the Abstract API Timezone service to deliver accurate local time readings, timestamps, and official timezone codes (e.g., IST, EST, GMT, JST).
-- 🎨 **Reactive Visual Feedback** — Interactive hover states illuminate hovered sovereign boundaries with distinctive fill transitions (`silver` highlight upon hover).
-- 📋 **Comprehensive Country Directory** — Includes a dedicated tabular timezone reference portal (`country.html`) styled with clean contrast for rapid alphabetical scanning.
-- 🚀 **Zero Build Pipeline & Zero Dependencies** — Native Vanilla JavaScript (ES6+), semantic HTML5, and pure CSS. No heavy framework overhead, bundler requirements, or build delays.
-- 📱 **Cross-Platform Responsive Layout** — Optimized for desktop displays, tablets, and mobile screens.
+Combining the aesthetic discipline of Swiss horology (Braun, Dieter Rams, Patek Philippe world timers) with the functional rigor of aviation flight telemetry and cartographic geodesy:
+- **Zero-Latency Client-Side Horology:** Native `Intl.DateTimeFormat` and IANA timezone computation eliminate latency and third-party API rate-limiting.
+- **Astronomical Solar Terminator:** Mathematical solar declination and subsolar meridian projection render the real-time day/night shadow boundary directly across equirectangular cartography.
+- **24-Hour Mechanical Time Scrubber:** 96-tick radio scale tuner with a 1px Vermilion needle enabling instant simulated time travel across all global meridian bands.
+- **Bento Telemetry Matrix:** Docked multi-zone horological cells featuring dynamic 24-hour working hours (09:00–17:00) daylight status ribbons.
+- **Geodesic Command Palette (`Cmd+K`):** Substring and fuzzy query search across 220+ sovereign territories and IANA identifiers.
 
 ---
 
-## 🛠️ Technology Stack
-
-| Layer | Technologies & Tools | Description |
-| :--- | :--- | :--- |
-| **Core Architecture** | Vanilla JavaScript (ES6+) | Asynchronous fetch requests, DOM manipulation, coordinate math |
-| **Markup & Semantics** | HTML5 | Clean document structuring across landing, map, directory, and auth views |
-| **Styling & HUD** | CSS3 & Custom Design Tokens | Floating HUD cards, frosted glass overlays, animated hover transitions |
-| **Vector Engine** | SVG (Scalable Vector Graphics) | High-resolution geographic path definitions with viewbox coordinate scaling |
-| **External API** | Abstract API (Current Time REST API) | Real-time global timezone lookups and atomic datetime resolution |
-| **Iconography & Fonts** | FontAwesome 6 & Web Fonts | Crisp UI icons, typography hierarchy, and navigation glyphs |
-
----
-
-## 🏛️ System Architecture
+## 2. Architectural Blueprint
 
 ```mermaid
-flowchart LR
-    A[User Cursor / Mouse] -->|Hover / Move| B(Vector Country Path)
-    B -->|Track clientX / clientY| C[Floating HUD Tooltip]
-    A -->|Click Country| D[Event Listener trigger]
-    D -->|GET /v1/current_time| E[Abstract Timezone API]
-    E -->|JSON Response datetime, timezone_abbrev| F[HUD Time Banner #timeCont]
-    F -->|Render| G[Live Local Time Display]
+graph TD
+    User([User / Navigator]) --> Index[index.html // Canonical Root]
+    Index --> Atlas[src/pages/map.html // Flight Deck Atlas]
+    Index --> Directory[src/pages/country.html // Universal Directory]
+    Index --> Auth[src/pages/auth.html // Operator Clearance]
+    Index --> Contact[src/pages/contact.html // Telemetry Registry]
+
+    subgraph "Core Runtime (src/main.js)"
+        Atlas --> MC[MapController]
+        Atlas --> SC[ScrubberController]
+        Atlas --> TM[TelemetryMatrix]
+        Atlas --> CP[CommandPalette]
+        Atlas --> NH[NavigationHeader]
+    end
+
+    subgraph "Domain Engines & Data Layer"
+        TM & MC & Directory --> CD[(countries.data.js)]
+        MC & NH --> TMATH[utils/timeMath.js // Declination & Terminator]
+        NH & SC --> TS[api/timeService.js // Intl Engine + Verification]
+        TS --> HTTP[api/httpClient.js // Abortable Fetch Wrapper]
+        TS --> ENV_CFG[config/env.js // import.meta.env Loader]
+    end
+
+    subgraph "Chronos-01 Design System"
+        Atlas & Directory & Auth & Contact & Index -.-> CSS[src/styles/main.css]
+        CSS --> TOKENS[tokens.css // Hairlines, Alabaster/Obsidian, Vermilion]
+        CSS --> BASE[base.css // Resets, Tabular-Nums]
+        CSS --> LAYOUT[layout.css // Bento Grid, HUD, Clocks]
+    end
 ```
 
 ---
 
-## 📁 Repository Structure
+## 3. Directory Structure
 
 ```text
-On-Map-Time-Zones/
-├── 📄 home.html         # Main dashboard and welcome landing portal
-├── 📄 intro.html        # Animated intro splash screen with redirect countdown
-├── 📄 map.html          # Core interactive vector world map interface
-├── 📄 country.html      # Tabular country timezone catalog and lookup directory
-├── 📄 contact.html      # User feedback and inquiry transmission interface
-├── 📄 login.html        # Authentication and member sign-in screen
-├── 📄 script.js         # Core application logic, event listeners, and API integration
-├── 📄 style.css         # Styling system, HUD overlays, tooltips, and map layout
-├── 📄 redirect.js       # Auto-redirection router between intro and home page
-└── 📄 README.md         # Comprehensive project documentation
+horologium/
+├── .vscode/
+│   ├── settings.json          # Production workspace formatting & linting rules
+│   └── extensions.json        # Recommended VS Code extensions
+├── public/
+│   ├── assets/
+│   │   ├── icons/             # SVG telemetry symbology
+│   │   └── geo/               # Static TopoJSON / GeoJSON world map vectors
+│   └── favicon.svg            # Precision meridian monogram favicon
+├── src/
+│   ├── api/
+│   │   ├── httpClient.js      # Centralized fetch wrapper with timeout & error handling
+│   │   └── timeService.js     # Timezone API client with native Intl fallback
+│   ├── config/
+│   │   ├── env.js             # Validated environment loader (import.meta.env)
+│   │   └── constants.js       # App-wide constants, default meridians, intervals
+│   ├── data/
+│   │   └── countries.data.js  # Modularized 220-nation ISO/IANA geographical database
+│   ├── components/
+│   │   ├── map/
+│   │   │   └── mapController.js    # Interactive SVG world map, graticules, terminator
+│   │   ├── clock/
+│   │   │   ├── scrubberController.js # 24h mechanical aperture ruler scrubber
+│   │   │   └── telemetryMatrix.js    # Docked Bento horology matrix with business hours
+│   │   └── ui/
+│   │       ├── commandPalette.js     # Cmd+K fuzzy / substring search palette
+│   │       └── navigation.js         # Master UTC ticker, solar dec, format & theme toggles
+│   ├── pages/
+│   │   ├── map.html           # Primary interactive atlas flight deck
+│   │   ├── country.html       # Geodesic country & multi-zone breakdown directory
+│   │   ├── auth.html          # Operator authentication clearance
+│   │   └── contact.html       # Communications & telemetry dispatch registry
+│   ├── styles/
+│   │   ├── tokens.css         # Design system variables (Hairlines, Colors, Fonts)
+│   │   ├── base.css           # Resets, typography rules, tabular-nums enforcement
+│   │   ├── layout.css         # Exposed 1px Bento Grid & HUD architecture
+│   │   └── main.css           # Master stylesheet importing tokens, base, and layout
+│   ├── utils/
+│   │   ├── dom.js             # Viewport boundary positioning & DOM helpers
+│   │   ├── router.js          # Clean query param routing & navigation helpers
+│   │   └── timeMath.js        # Solar declination, subsolar lon, and terminator geometry
+│   └── main.js                # Application bootstrap coordinating all subsystems
+├── index.html                 # Single Unified Root Entry Point
+├── .env                       # Local environment secrets (NEVER COMMITTED)
+├── .env.example               # Committed template defining required environment keys
+├── .gitignore                 # Production-grade Git ignore rules
+├── vite.config.js             # Multi-page Vite build configuration
+├── package.json               # Package manifests & lifecycle scripts
+└── README.md                  # Executive architectural documentation
 ```
 
 ---
 
-## ⚙️ Installation & Local Setup
+## 4. Environment & Security Hardening
 
-Running the project locally takes less than a minute. No `npm install` or package configuration is required!
+Horologium encapsulates all third-party endpoints and API credentials behind standard Vite environment variables. **No secret keys are bundled in client assets.**
 
-### 1️⃣ Clone the Repository
+### Environment Configuration (`.env`)
+
+Copy the template file to create your local environment:
+```bash
+cp .env.example .env
+```
+
+Variables defined in `.env`:
+```ini
+# Application Identity
+VITE_APP_NAME="Horologium"
+VITE_APP_ENV="development"
+
+# Temporal Telemetry Services
+VITE_TIME_API_BASE_URL="https://timezone.abstractapi.com/v1/current_time"
+VITE_TIME_API_KEY="your_api_key_here"
+
+# Geodesic & Cartographic APIs
+VITE_GEO_API_KEY=""
+
+# Engine Resilience Flags
+VITE_ENABLE_FALLBACK_INTL="true"
+```
+
+> [!NOTE]
+> Even if external time APIs encounter rate limits (e.g., HTTP 429), `src/api/timeService.js` automatically cascades to native browser `Intl.DateTimeFormat` with sub-millisecond precision.
+
+---
+
+## 5. Local Setup & Development
+
+### Prerequisites
+- Node.js 18.0+ or Node.js 20.0+ LTS
+- npm 9.0+ or pnpm / yarn
+
+### Installation & Execution
 
 ```bash
-git clone https://github.com/shaikimthiyas/On-Map-Time-Zones.git
-cd On-Map-Time-Zones
+# 1. Clone repository
+git clone https://github.com/shaikimthiyas/On-Map-Time-Zones.git horologium
+cd horologium
+
+# 2. Install dependencies
+npm install
+
+# 3. Start local development server
+npm run dev
+
+# 4. Build production bundle
+npm run build
+
+# 5. Preview production build locally
+npm run preview
 ```
 
-### 2️⃣ Launch the Application
-
-You can launch the application through any of the following methods:
-
-#### Option A: Direct Browser Launch
-Double-click `home.html` (or `map.html`) to open directly in Chrome, Firefox, Safari, or Edge.
-
-#### Option B: Python Local Server (Recommended)
-```bash
-# Python 3.x
-python -m http.server 8000
-```
-Open [http://localhost:8000/home.html](http://localhost:8000/home.html) in your browser.
-
-#### Option C: Node.js / npx serve
-```bash
-npx serve .
-```
-
-#### Option D: VS Code Live Server Extension
-Right-click on `home.html` in VS Code and select **"Open with Live Server"**.
+The application will be accessible at `http://localhost:5173/`.
 
 ---
 
-## 🎮 How It Works
+## 6. Design System Specification (Chronos-01)
 
-1. **Launch the Map**: Navigate to `map.html` from the home screen.
-2. **Inspect Territories**: Move your mouse across the world map. The floating indicator will reveal the country's name as your cursor glides across borders.
-3. **Fetch Local Time**: Click on any country. The client fires an asynchronous API request:
-   ```javascript
-   const api_url = `https://timezone.abstractapi.com/v1/current_time/?api_key=${API_KEY}&location=${countryId}`;
-   ```
-4. **Read Real-Time Clock**: The floating top banner instantly updates with:
-   $$\text{[Country Name]'s time} = \text{YYYY-MM-DD HH:MM:SS} \quad [\text{Timezone Code}]$$
-
----
-
-## 🔑 API Configuration (Optional)
-
-The application utilizes the **Abstract API Current Time API**. 
-If you wish to configure your own free API key for higher rate limits:
-
-1. Sign up for a free key at [Abstract API Timezone](https://www.abstractapi.com/api/timezone-api).
-2. Open [script.js](file:///script.js) and update the `api_key` parameter in the `getUser` function:
-   ```javascript
-   const api_url = `https://timezone.abstractapi.com/v1/current_time/?api_key=YOUR_API_KEY_HERE&location=${place}`;
-   ```
+| Subsystem | Specification |
+|---|---|
+| **Editorial Typography** | `Instrument Serif` (Italicized accents), `Plus Jakarta Sans` (Legibility UI), `JetBrains Mono` (Tabular Telemetry) |
+| **Color Archetype** | **Obsidian Night Deck** (`#080C14` canvas, `#0E131F` surface) / **Warm Alabaster Atlas** (`#F7F6F2` canvas, `#FFFFFF` surface) |
+| **Structural Hairlines**| `1px solid var(--border-hairline)` (`#1E2638` in dark mode) without rounded bubble frames |
+| **Accents** | Vermilion Indicator (`#FF4D2E`), Radar Green Working Hours (`#10B981`), Amber Warning (`#F59E0B`) |
+| **Numerals** | Strict `font-variant-numeric: tabular-nums` preventing layout jitter during live second ticking |
 
 ---
 
-## 🗺️ Roadmap & Upcoming Enhancements
+## 7. License & Credits
 
-- [ ] **Autocomplete Search Bar** — Jump directly to and highlight any country via keyboard input.
-- [ ] **Browser Native Offline Mode** — Graceful fallback using `Intl.DateTimeFormat` when offline or if API limits are reached.
-- [ ] **Solar Day/Night Terminator** — Real-time shadow projection showing day and night halves of the globe.
-- [ ] **Favorite Cities Dock** — Pin frequently watched time zones to a persistent quick-access drawer.
-- [ ] **Dark / Light Theme Toggle** — System-aware palette switcher for comfortable nighttime navigation.
-
----
-
-## 🤝 Contributing
-
-Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. **Fork the Project** (`Click Fork at top-right`)
-2. **Create your Feature Branch**:
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your Changes**:
-   ```bash
-   git commit -m "feat: add interactive search autocomplete"
-   ```
-4. **Push to the Branch**:
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. **Open a Pull Request** via GitHub.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details.
-
----
-
-## 👤 Author & Maintainer
-
-**Shaik Mohamed Imthiyas**
-- GitHub: [@shaikimthiyas](https://github.com/shaikimthiyas)
-- Project: [On-Map-Time-Zones](https://github.com/shaikimthiyas/On-Map-Time-Zones)
-
----
-
-<div align="center">
-  <sub>Built with ❤️ for global explorers and distributed teams worldwide. If you find this project useful, please consider giving it a ⭐ on GitHub!</sub>
-</div>
+Architected and maintained by **Shaik Imthiyas** and the **Horologium Engineering Group**.  
+Distributed under the MIT License.

@@ -1,0 +1,79 @@
+/* ==========================================================================
+   CHRONOS-01 // DESIGN TOKENS
+   Swiss Horology & Cartographic Telemetry Color & Spatial Tokens
+   ========================================================================== */
+
+:root {
+  /* LIGHT MODE: "Archival Paper Atlas" */
+  --bg-canvas: #F4F3EF;            /* Warm unbleached cotton paper (Ocean/Base) */
+  --bg-surface-1: #EAE8E1;         /* Landmass fill / Secondary panels */
+  --bg-surface-2: #DFDDD4;         /* Hover states / Active timezone band */
+  --bg-glass: rgba(244, 243, 239, 0.92);
+
+  --text-primary: #141413;         /* Deep carbon ink */
+  --text-secondary: #575653;       /* Muted graphite */
+  --text-tertiary: #8C8A84;        /* Coordinate labels / Inactive ticks */
+
+  --border-hairline: #D5D3C8;      /* 1px structural grid lines */
+  --border-focus: #141413;         /* Active selection frame */
+
+  /* Accents & Telemetry */
+  --accent-primary: #D9381E;       /* Braun International Orange (Active Meridian / Live Second Hand) */
+  --accent-secondary: #1E5631;     /* Archival Forest Green (DST Active / Business Hours Overlap) */
+  --accent-tertiary: #C88A2B;      /* Brass / Amber (Solar Dawn/Dusk Twilight Zone) */
+
+  /* Map-Specific Tokens */
+  --map-water: #F4F3EF;
+  --map-land: #E6E4DC;
+  --map-land-stroke: #C9C7BD;
+  --map-land-hover: #D7D4C8;
+  --map-land-selected: #141413;
+  --map-land-selected-stroke: #FF4D2D;
+  --map-graticule: rgba(20, 20, 19, 0.08);
+  --map-terminator-shadow: rgba(20, 20, 19, 0.12);
+
+  /* Typography Tokens */
+  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-editorial: 'Instrument Serif', Georgia, serif;
+
+  /* Strict Radii System */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+
+  /* Mechanical Transition Physics (Zero Bounce) */
+  --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 150ms var(--ease-mechanical);
+  --transition-medium: 250ms var(--ease-mechanical);
+}
+
+.dark {
+  /* DARK MODE: "Avionics Night Deck" (DEFAULT) */
+  --bg-canvas: #0A0B0A;            /* Deep anodized carbon (Ocean/Base) */
+  --bg-surface-1: #121413;         /* Landmass fill / Docked HUD panels */
+  --bg-surface-2: #1C1F1D;         /* Active timezone band / Card hover */
+  --bg-glass: rgba(18, 20, 19, 0.92);
+
+  --text-primary: #F2F0E8;         /* Warm phosphor chalk */
+  --text-secondary: #9E9C94;       /* Muted titanium */
+  --text-tertiary: #5C5B57;        /* Subtle grid indices */
+
+  --border-hairline: #222523;      /* 1px exposed structural hairline */
+  --border-focus: #F2F0E8;
+
+  /* Accents & Telemetry */
+  --accent-primary: #FF4D2D;       /* High-vis Horological Vermilion (Active Meridian / Pin) */
+  --accent-secondary: #34D399;     /* Radar Emerald (Business Hours / Sync Active) */
+  --accent-tertiary: #F59E0B;      /* Sodium Vapor Amber (Twilight / Offset Warning) */
+
+  /* Map-Specific Tokens */
+  --map-water: #0A0B0A;
+  --map-land: #161817;
+  --map-land-stroke: #252A27;
+  --map-land-hover: #222624;
+  --map-land-selected: #2C312E;
+  --map-land-selected-stroke: #FF4D2D;
+  --map-graticule: rgba(242, 240, 232, 0.06);
+  --map-terminator-shadow: rgba(0, 0, 0, 0.55);
+}

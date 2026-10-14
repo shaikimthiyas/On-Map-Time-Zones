@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build & Bundler Output
+dist/
+build/
+.vite/
+
+# Environment & Secrets (CRITICAL SECURITY)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs & OS Artifacts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE & Editor
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

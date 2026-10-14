@@ -1,0 +1,14 @@
+{
+  "name": "horologium",
+  "version": "1.0.0",
+  "description": "High-precision interactive world timezone atlas, UTC meridian tracker, and live temporal telemetry web application.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
