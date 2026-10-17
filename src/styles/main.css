@@ -1,8 +1,12 @@
 /* ==========================================================================
-   HOROLOGIUM // MASTER STYLESHEET
+   HOROLOGIUM // MASTER STYLESHEET (v1.0.0-PRO)
+   Codename: Calibre-01
+   Aesthetic Posture: Swiss High-Horology × Braun Industrial Hardware
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+/* TRI-TIER TYPOGRAPHY STACK: Switzer (Display) / General Sans (UI) / JetBrains Mono (Telemetry) */
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@500,600&f[]=general-sans@400,500,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @import './tokens.css';
 @import './base.css';
